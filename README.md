@@ -15,17 +15,17 @@ While Laravel Cashier does this job really well, there are some features that ca
 
 Install the package:
 ```bash
-$ composer require abr4xas/laravel-plans
+$ composer require keoby/laravel-plans
 ```
 
 If your Laravel version does not support package discovery, add this line in the `providers` array in your `config/app.php` file:
 ```php
-Abr4xas\Plans\PlansServiceProvider::class,
+Keoby\LaravelPlans\PlansServiceProvider::class,
 ```
 
 Publish the config file & migration files:
 ```bash
-$ php artisan vendor:publish --provider=Abr4xas\Plans\PlansServiceProvider
+$ php artisan vendor:publish --provider=Keoby\LaravelPlans\PlansServiceProvider
 ```
 
 Migrate the database:
@@ -35,7 +35,7 @@ $ php artisan migrate
 
 Add the `HasPlans` trait to your Eloquent model:
 ```php
-use Abr4xas\Plans\Traits\HasPlans;
+use Keoby\LaravelPlans\Traits\HasPlans;
 
 class User extends Model {
     use HasPlans;
@@ -47,7 +47,7 @@ class User extends Model {
 
 ---
 
-The basic unit of the subscription-like system is a plan. You can create it using `Abr4xas\Plans\Models\Plan` or your model, if you have implemented your own.
+The basic unit of the subscription-like system is a plan. You can create it using `Keoby\LaravelPlans\Models\Plan` or your model, if you have implemented your own.
 
 ```php
 $plan = Plan::create([
@@ -69,7 +69,7 @@ Marking a feature type can be done using:
 
 **Note: For unlimited feature, the `limit` field will be set to any negative value.**
 
-To attach features to your plan, you can use the relationship `features()` and pass as many `Abr4xas\Plans\Models\Feature`instances as you need:
+To attach features to your plan, you can use the relationship `features()` and pass as many `Keoby\LaravelPlans\Models\Feature`instances as you need:
 
 ```php
 $plan->features()->saveMany([
@@ -276,39 +276,39 @@ All you have to do is to implement the following Events in your `EventServicePro
 ```php
 $listen = [
     ...
-    \Abr4xas\Plans\Events\CancelSubscription::class => [
+    \Keoby\Plans\Events\CancelSubscription::class => [
         // $event->model = The model that cancelled the subscription.
         // $event->subscription = The subscription that was cancelled.
     ],
-    \Abr4xas\Plans\Events\NewSubscription::class => [
+    \Keoby\Plans\Events\NewSubscription::class => [
         // $event->model = The model that was subscribed.
         // $event->subscription = The subscription that was created.
     ],
-     \Abr4xas\Plans\Events\NewSubscriptionUntil::class => [
+     \Keoby\Plans\Events\NewSubscriptionUntil::class => [
         // $event->model = The model that was subscribed.
         // $event->subscription = The subscription that was created.
     ],
-    \Abr4xas\Plans\Events\ExtendSubscription::class => [
+    \Keoby\Plans\Events\ExtendSubscription::class => [
         // $event->model = The model that extended the subscription.
         // $event->subscription = The subscription that was extended.
         // $event->startFromNow = If the subscription is exteded now or is created a new subscription, in the future.
         // $event->newSubscription = If the startFromNow is false, here will be sent the new subscription that starts after the current one ends.
     ],
-    \Abr4xas\Plans\Events\ExtendSubscriptionUntil::class => [
+    \Keoby\Plans\Events\ExtendSubscriptionUntil::class => [
         // $event->model = The model that extended the subscription.
         // $event->subscription = The subscription that was extended.
         // $event->expiresOn = The Carbon instance of the date when the subscription will expire.
         // $event->startFromNow = If the subscription is exteded now or is created a new subscription, in the future.
         // $event->newSubscription = If the startFromNow is false, here will be sent the new subscription that starts after the current one ends.
     ],
-    \Abr4xas\Plans\Events\UpgradeSubscription::class => [
+    \Keoby\Plans\Events\UpgradeSubscription::class => [
         // $event->model = The model that upgraded the subscription.
         // $event->subscription = The current subscription.
         // $event->startFromNow = If the subscription is upgraded now or is created a new subscription, in the future.
         // $event->oldPlan = Here lies the current (which is now old) plan.
         // $event->newPlan = Here lies the new plan. If it's the same plan, it will match with the $event->oldPlan
     ],
-    \Abr4xas\Plans\Events\UpgradeSubscriptionUntil::class => [
+    \Keoby\Plans\Events\UpgradeSubscriptionUntil::class => [
         // $event->model = The model that upgraded the subscription.
         // $event->subscription = The current subscription.
         // $event->expiresOn = The Carbon instance of the date when the subscription will expire.
@@ -316,13 +316,13 @@ $listen = [
         // $event->oldPlan = Here lies the current (which is now old) plan.
         // $event->newPlan = Here lies the new plan. If it's the same plan, it will match with the $event->oldPlan
     ],
-    \Abr4xas\Plans\Events\FeatureConsumed::class => [
+    \Keoby\Plans\Events\FeatureConsumed::class => [
         // $event->subscription = The current subscription.
         // $event->feature = The feature that was used.
         // $event->used = The amount used.
         // $event->remaining = The total amount remaining. If the feature is unlimited, will return -1
     ],
-     \Abr4xas\Plans\Events\FeatureUnconsumed::class => [
+     \Keoby\Plans\Events\FeatureUnconsumed::class => [
         // $event->subscription = The current subscription.
         // $event->feature = The feature that was used.
         // $event->used = The amount reverted.
@@ -351,7 +351,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ### Credits
 
-- [Angel](https://github.com/abr4xas)
+- [Keoby](https://github.com/keoby)
 - **Georgescu Alexandru** *Initial work*
 - [Musa Kurt](https://github.com/whtht)
 - [All Contributors](../../contributors)

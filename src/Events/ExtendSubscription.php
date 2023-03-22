@@ -1,8 +1,8 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Events;
+namespace Keoby\LaravelPlans\Events;
 
-use Abr4xas\LaravelPlans\Models\Subscription;
+use Keoby\LaravelPlans\Models\PlanSubscription;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -14,7 +14,7 @@ class ExtendSubscription
 
     public Model $model;
 
-    public Subscription $subscription;
+    public PlanSubscription $subscription;
 
     public bool $startFromNow;
 
@@ -22,12 +22,12 @@ class ExtendSubscription
 
     /**
      * @param  Model  $model The model on which the action was done.
-     * @param  Subscription  $subscription Subscription that was extended.
+     * @param  PlanSubscription  $subscription PlanSubscription that was extended.
      * @param  bool  $startFromNow whether the current subscription is extended or is created at the next cycle.
-     * @param  null|Subscription  $newSubscription Null if $startFromNow is true; The new subscription created in extension.
+     * @param  null|PlanSubscription  $newSubscription Null if $startFromNow is true; The new subscription created in extension.
      * @return void
      */
-    public function __construct(Model $model, Subscription $subscription, bool $startFromNow, ?Subscription $newSubscription)
+    public function __construct(Model $model, PlanSubscription $subscription, bool $startFromNow, ?PlanSubscription $newSubscription)
     {
         $this->model = $model;
         $this->subscription = $subscription;

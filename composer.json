@@ -1,23 +1,24 @@
 {
-    "name": "abr4xas/laravel-plans",
+    "name": "keoby/laravel-plans",
     "description": "Laravel Plans is a package for SaaS apps that need management over plans, features, subscriptions, events for plans or limited, countable features.",
     "keywords": [
-        "abr4xas",
+        "keoby",
         "laravel",
         "laravel-plans"
     ],
-    "homepage": "https://github.com/abr4xas/laravel-plans",
+    "homepage": "https://github.com/keoby/laravel-plans",
     "license": "MIT",
     "authors": [
         {
-            "name": "Angel",
-            "email": "angel@tepuilabs.dev",
+            "name": "Keoby",
+            "email": "contact@keoby.com",
             "role": "Developer"
         }
     ],
     "require": {
         "php": "^8.1",
-        "spatie/laravel-package-tools": "^1.9.2"
+        "doctrine/dbal": "^2.8.0|^3.0",
+        "laravel/framework": "5.7.*|5.8.*|^6.0|^7.0|^8.0|~9",
     },
     "require-dev": {
         "laravel/pint": "^1.0",
@@ -27,17 +28,18 @@
         "pestphp/pest": "^1.21",
         "pestphp/pest-plugin-laravel": "^1.1",
         "phpunit/phpunit": "^9.5",
-        "spatie/laravel-ray": "^1.26"
+        "orchestra/database": "3.8.*|^7.0|^6.6",
+        "laravel/legacy-factories": "^1.1"
     },
     "autoload": {
         "psr-4": {
-            "Abr4xas\\LaravelPlans\\": "src",
-            "Abr4xas\\LaravelPlans\\Database\\Factories\\": "database/factories"
+            "Keoby\\LaravelPlans\\": "src",
+            "Keoby\\LaravelPlans\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Abr4xas\\LaravelPlans\\Tests\\": "tests"
+            "Keoby\\LaravelPlans\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -53,10 +55,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Abr4xas\\LaravelPlans\\LaravelPlansServiceProvider"
+                "Keoby\\LaravelPlans\\LaravelPlansServiceProvider"
             ],
             "aliases": {
-                "LaravelPlans": "Abr4xas\\LaravelPlans\\Facades\\LaravelPlans"
+                "LaravelPlans": "Keoby\\LaravelPlans\\Facades\\LaravelPlans"
             }
         }
     },

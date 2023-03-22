@@ -1,8 +1,8 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Database\Factories;
+namespace Keoby\LaravelPlans\Database\Factories;
 
-use Abr4xas\LaravelPlans\Tests\Models\User;
+use Keoby\LaravelPlans\Tests\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('subscriptions', function (Blueprint $table) {
+        Schema::create('plan_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->string('payment_method')->nullable()->default(null);
             $table->boolean('active')->default(false);
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->nullableMorphs('model');
             $table->timestamps();
 
-            $table->foreignIdFor(\Abr4xas\LaravelPlans\Models\Plan::class)
+            $table->foreignIdFor(\Keoby\LaravelPlans\Models\Plan::class)
                 ->references('id')
                 ->on('plans')
                 ->onDelete('cascade');
@@ -44,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::dropIfExists('plan_subscriptions');
     }
 };

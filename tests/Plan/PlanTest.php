@@ -1,7 +1,7 @@
 <?php
 
-use Abr4xas\LaravelPlans\Models\Plan;
-use Abr4xas\LaravelPlans\Tests\Models\User;
+use Keoby\LaravelPlans\Models\Plan;
+use Keoby\LaravelPlans\Tests\Models\User;
 use Carbon\Carbon;
 
 beforeEach(function () {

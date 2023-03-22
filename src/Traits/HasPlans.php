@@ -1,16 +1,16 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Traits;
+namespace Keoby\LaravelPlans\Traits;
 
-use Abr4xas\LaravelPlans\Events\CancelSubscription;
-use Abr4xas\LaravelPlans\Events\ExtendSubscription;
-use Abr4xas\LaravelPlans\Events\ExtendSubscriptionUntil;
-use Abr4xas\LaravelPlans\Events\NewSubscription;
-use Abr4xas\LaravelPlans\Events\NewSubscriptionUntil;
-use Abr4xas\LaravelPlans\Events\UpgradeSubscription;
-use Abr4xas\LaravelPlans\Events\UpgradeSubscriptionUntil;
-use Abr4xas\LaravelPlans\Models\Plan;
-use Abr4xas\LaravelPlans\Models\Subscription;
+use Keoby\LaravelPlans\Events\CancelSubscription;
+use Keoby\LaravelPlans\Events\ExtendSubscription;
+use Keoby\LaravelPlans\Events\ExtendSubscriptionUntil;
+use Keoby\LaravelPlans\Events\NewSubscription;
+use Keoby\LaravelPlans\Events\NewSubscriptionUntil;
+use Keoby\LaravelPlans\Events\UpgradeSubscription;
+use Keoby\LaravelPlans\Events\UpgradeSubscriptionUntil;
+use Keoby\LaravelPlans\Models\Plan;
+use Keoby\LaravelPlans\Models\PlanSubscription;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
@@ -19,13 +19,13 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait HasPlans
 {
     /**
-     * Get Subscriptions relationship.
+     * Get PlanSubscriptions relationship.
      *
      * @return morphMany Relationship.
      */
     public function subscriptions(): MorphMany
     {
-        return $this->morphMany(Subscription::class, 'model');
+        return $this->morphMany(PlanSubscription::class, 'model');
     }
 
     /**
@@ -43,9 +43,9 @@ trait HasPlans
     /**
      * Return the current active subscription.
      *
-     * @return Subscription|null The PlanSubscription model instance.
+     * @return PlanSubscription|null The PlanSubscription model instance.
      */
-    public function activeSubscription(): ?Subscription
+    public function activeSubscription(): ?PlanSubscription
     {
         return $this->currentSubscription()->paid()->notCancelled()->first();
     }
@@ -53,9 +53,9 @@ trait HasPlans
     /**
      * Get the last active subscription.
      *
-     * @return null|Subscription The PlanSubscription model instance.
+     * @return null|PlanSubscription The PlanSubscription model instance.
      */
-    public function lastActiveSubscription(): ?Subscription
+    public function lastActiveSubscription(): ?PlanSubscription
     {
         if (! $this->hasSubscriptions()) {
             return null;
@@ -89,9 +89,9 @@ trait HasPlans
     /**
      * Get the last unpaid subscription, if any.
      *
-     * @return Subscription
+     * @return PlanSubscription
      */
-    public function lastUnpaidSubscription(): Subscription
+    public function lastUnpaidSubscription(): PlanSubscription
     {
         return $this->subscriptions()->latest('starts_on')
             ->notCancelled()
@@ -104,9 +104,9 @@ trait HasPlans
      * For example, on subscription, if your user wants to subscribe to another subscription and has a due (unpaid) one, it will
      * check for the last due, will cancel it, and will re-subscribe to it.
      *
-     * @return null|Subscription Null or a Plan Subscription instance.
+     * @return null|PlanSubscription Null or a Plan Subscription instance.
      */
-    public function lastDueSubscription(): ?Subscription
+    public function lastDueSubscription(): ?PlanSubscription
     {
         if (! $this->hasSubscriptions() || $this->hasActiveSubscription()) {
             return null;
@@ -167,7 +167,7 @@ trait HasPlans
      */
     public function subscribeTo(Plan $plan, int $duration = 30, bool $isRecurring = true): Model|bool
     {
-        $subscriptionModel = Subscription::class;
+        $subscriptionModel = PlanSubscription::class;
 
         if ($duration < 1 || $this->hasActiveSubscription()) {
             return false;
@@ -215,7 +215,7 @@ trait HasPlans
             $this->lastDueSubscription()->delete();
         }
 
-        $subscription = $this->subscriptions()->save(new Subscription([
+        $subscription = $this->subscriptions()->save(new PlanSubscription([
             'plan_id' => $plan->id,
             'starts_on' => Carbon::now()->subSeconds(1),
             'expires_on' => $date,
@@ -276,9 +276,9 @@ trait HasPlans
      * @param  DateTime|string  $date The date (either DateTime, date or Carbon instance) until the subscription will be extended until.
      * @param  bool  $startFromNow whether the subscription will start from now, extending the current plan, or a new subscription will be created to extend the current one.
      * @param  bool  $isRecurring whether the subscription should auto-renew. The renewal period (in days) is the difference between now and the set date.
-     * @return false|Model|Subscription The PlanSubscription model instance with the new plan or the current one, extended.
+     * @return false|Model|PlanSubscription The PlanSubscription model instance with the new plan or the current one, extended.
      */
-    public function upgradeCurrentPlanToUntil(Plan $newPlan, DateTime|string $date, bool $startFromNow = true, bool $isRecurring = true): Model|bool|Subscription
+    public function upgradeCurrentPlanToUntil(Plan $newPlan, DateTime|string $date, bool $startFromNow = true, bool $isRecurring = true): Model|bool|PlanSubscription
     {
         if (! $this->hasActiveSubscription()) {
             return $this->subscribeToUntil($newPlan, $date, $isRecurring);
@@ -319,9 +319,9 @@ trait HasPlans
      * @param  int  $duration The duration, in days, for the extension.
      * @param  bool  $startFromNow whether the subscription will be extended from now, extending to the current plan, or a new subscription will be created to extend the current one.
      * @param  bool  $isRecurring whether the subscription should auto-renew. The renewal period (in days) equivalent with $duration.
-     * @return bool|Subscription The PlanSubscription model instance of the extended subscription.
+     * @return bool|PlanSubscription The PlanSubscription model instance of the extended subscription.
      */
-    public function extendCurrentSubscriptionWith(int $duration = 30, bool $startFromNow = true, bool $isRecurring = true): bool|Subscription
+    public function extendCurrentSubscriptionWith(int $duration = 30, bool $startFromNow = true, bool $isRecurring = true): bool|PlanSubscription
     {
         if (! $this->hasActiveSubscription()) {
             if ($this->hasSubscriptions()) {
@@ -350,7 +350,7 @@ trait HasPlans
             return $activeSubscription;
         }
 
-        $subscription = $this->subscriptions()->save(new Subscription([
+        $subscription = $this->subscriptions()->save(new PlanSubscription([
             'plan_id' => $activeSubscription->plan_id,
             'starts_on' => Carbon::parse($activeSubscription->expires_on),
             'expires_on' => Carbon::parse($activeSubscription->expires_on)->addDays($duration),
@@ -371,9 +371,9 @@ trait HasPlans
      * @param  DateTime|string  $date The date (either DateTime, date or Carbon instance) until the subscription will be extended until.
      * @param  bool  $startFromNow whether the subscription will be extended from now, extending to the current plan, or a new subscription will be created to extend the current one.
      * @param  bool  $isRecurring whether the subscription should auto-renew. The renewal period (in days) is the difference between now and the set date.
-     * @return false|Subscription The Subscription model instance of the extended subscription.
+     * @return false|PlanSubscription The PlanSubscription model instance of the extended subscription.
      */
-    public function extendCurrentSubscriptionUntil(DateTime|string $date, bool $startFromNow = true, bool $isRecurring = true): bool|Subscription
+    public function extendCurrentSubscriptionUntil(DateTime|string $date, bool $startFromNow = true, bool $isRecurring = true): bool|PlanSubscription
     {
         if (! $this->hasActiveSubscription()) {
             if ($this->hasSubscriptions()) {
@@ -407,7 +407,7 @@ trait HasPlans
             return false;
         }
 
-        $subscription = $this->subscriptions()->save(new Subscription([
+        $subscription = $this->subscriptions()->save(new PlanSubscription([
             'plan_id' => $activeSubscription->plan_id,
             'starts_on' => Carbon::parse($activeSubscription->expires_on),
             'expires_on' => $date,
@@ -425,9 +425,9 @@ trait HasPlans
     /**
      * Cancel the current subscription.
      *
-     * @return Subscription|false whether the subscription was cancelled or not.
+     * @return PlanSubscription|false whether the subscription was cancelled or not.
      */
-    public function cancelCurrentSubscription(): bool|Subscription
+    public function cancelCurrentSubscription(): bool|PlanSubscription
     {
         if (! $this->hasActiveSubscription()) {
             return false;
@@ -453,9 +453,9 @@ trait HasPlans
      * Renew the subscription, if needed, and create a new charge
      * if the last active subscription was using Stripe and was paid.
      *
-     * @return false|Subscription
+     * @return false|PlanSubscription
      */
-    public function renewSubscription(): Subscription|bool
+    public function renewSubscription(): PlanSubscription|bool
     {
         if (! $this->hasSubscriptions()) {
             return false;

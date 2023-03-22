@@ -13,18 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('features', function (Blueprint $table) {
+        Schema::create('plan_subscription_usages', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('code');
-            $table->text('description')->nullable();
-            $table->enum('type', ['feature', 'limit'])->default('feature');
-            $table->integer('limit')->default(0);
+            $table->float('used', 9, 2)->default(0);
             $table->timestamps();
 
-            $table->foreignIdFor(\Abr4xas\LaravelPlans\Models\Plan::class)
+            $table->foreignIdFor(\Keoby\LaravelPlans\Models\PlanSubscription::class)
                 ->references('id')
-                ->on('plans')
+                ->on('subscriptions')
                 ->onDelete('cascade');
         });
     }
@@ -36,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('features');
+        Schema::dropIfExists('plan_subscription_usages');
     }
 };

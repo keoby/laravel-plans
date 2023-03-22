@@ -1,6 +1,6 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Models;
+namespace Keoby\LaravelPlans\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

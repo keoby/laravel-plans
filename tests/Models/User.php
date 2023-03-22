@@ -1,9 +1,9 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Tests\Models;
+namespace Keoby\LaravelPlans\Tests\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Abr4xas\LaravelPlans\Traits\HasPlans;
+use Keoby\LaravelPlans\Traits\HasPlans;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

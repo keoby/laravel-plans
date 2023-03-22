@@ -1,8 +1,8 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Database\Factories;
+namespace Keoby\LaravelPlans\Database\Factories;
 
-use Abr4xas\LaravelPlans\Models\Plan;
+use Keoby\LaravelPlans\Models\Plan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

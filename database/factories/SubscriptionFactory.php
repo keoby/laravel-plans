@@ -1,8 +1,8 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Database\Factories;
+namespace Keoby\LaravelPlans\Database\Factories;
 
-use Abr4xas\LaravelPlans\Models\Subscription;
+use Keoby\LaravelPlans\Models\PlanSubscription;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class SubscriptionFactory extends Factory
 {
-    protected $model = Subscription::class;
+    protected $model = PlanSubscription::class;
 
     /**
      * Define the model's default state.

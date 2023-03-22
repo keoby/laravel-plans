@@ -1,16 +1,16 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Facades;
+namespace Keoby\LaravelPlans\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Abr4xas\LaravelPlans\LaravelPlans
+ * @see \Keoby\LaravelPlans\LaravelPlans
  */
 class LaravelPlans extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \Abr4xas\LaravelPlans\LaravelPlans::class;
+        return \Keoby\LaravelPlans\LaravelPlans::class;
     }
 }

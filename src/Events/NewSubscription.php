@@ -1,8 +1,8 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Events;
+namespace Keoby\LaravelPlans\Events;
 
-use Abr4xas\LaravelPlans\Models\Subscription;
+use Keoby\LaravelPlans\Models\PlanSubscription;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -14,14 +14,14 @@ class NewSubscription
 
     public Model $model;
 
-    public Subscription $subscription;
+    public PlanSubscription $subscription;
 
     /**
      * @param  Model  $model The model that subscribed.
-     * @param  Subscription  $subscription Subscription the model has subscribed to.
+     * @param  PlanSubscription  $subscription PlanSubscription the model has subscribed to.
      * @return void
      */
-    public function __construct(Model $model, Subscription $subscription)
+    public function __construct(Model $model, PlanSubscription $subscription)
     {
         $this->model = $model;
         $this->subscription = $subscription;

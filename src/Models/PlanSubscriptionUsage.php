@@ -1,6 +1,6 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Models;
+namespace Keoby\LaravelPlans\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +17,7 @@ class PlanSubscriptionUsage extends Model
 
     public function subscription(): BelongsTo
     {
-        return $this->belongsTo(Subscription::class);
+        return $this->belongsTo(PlanSubscription::class);
     }
 
     public function scopeCode($query, string $code)

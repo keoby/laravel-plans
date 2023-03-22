@@ -1,8 +1,8 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Events;
+namespace Keoby\LaravelPlans\Events;
 
-use Abr4xas\LaravelPlans\Models\Subscription;
+use Keoby\LaravelPlans\Models\PlanSubscription;
 use Carbon\Carbon;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Database\Eloquent\Model;
@@ -15,17 +15,17 @@ class NewSubscriptionUntil
 
     public Model $model;
 
-    public Subscription $subscription;
+    public PlanSubscription $subscription;
 
     public Carbon $expiresOn;
 
     /**
      * @param  Model  $model The model that subscribed.
-     * @param  Subscription  $subscription Subscription the model has subscribed to.
+     * @param  PlanSubscription  $subscription PlanSubscription the model has subscribed to.
      * @param  Carbon  $expiresOn The date when the subscription expires.
      * @return void
      */
-    public function __construct(Model $model, Subscription $subscription, Carbon $expiresOn)
+    public function __construct(Model $model, PlanSubscription $subscription, Carbon $expiresOn)
     {
         $this->model = $model;
         $this->subscription = $subscription;

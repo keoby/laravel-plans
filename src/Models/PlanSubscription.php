@@ -1,9 +1,9 @@
 <?php
 
-namespace Abr4xas\LaravelPlans\Models;
+namespace Keoby\LaravelPlans\Models;
 
-use Abr4xas\LaravelPlans\Events\FeatureConsumed;
-use Abr4xas\LaravelPlans\Events\FeatureUnconsumed;
+use Keoby\LaravelPlans\Events\FeatureConsumed;
+use Keoby\LaravelPlans\Events\FeatureUnconsumed;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Subscription extends Model
+class PlanSubscription extends Model
 {
     use HasFactory;
 

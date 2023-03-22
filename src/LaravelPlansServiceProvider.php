@@ -1,26 +1,24 @@
 <?php
 
-namespace Abr4xas\LaravelPlans;
+namespace Keoby\LaravelPlans;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
-class LaravelPlansServiceProvider extends PackageServiceProvider
+class LaravelPlansServiceProvider extends ServiceProvider
 {
-    public function configurePackage(Package $package): void
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('laravel-plans')
-            ->hasMigrations([
-                'create_plans_table.php.stub',
-                'create_features_table.php.stub',
-                'create_subscriptions_table.php.stub',
-                'create_plan_subscription_usages_table.php.stub',
-            ]);
+
+        $this->publishes([
+            __DIR__.'/../database/migrations/create_plans_table.php' => database_path('migrations/create_plans_table.php'),
+            __DIR__.'/../database/migrations/create_features_table.php' => database_path('migrations/create_features_table.php'),
+            __DIR__.'/../database/migrations/create_plan_subscriptions_table.php' => database_path('migrations/create_plan_subscriptions_table.php'),
+            __DIR__.'/../database/migrations/create_plan_subscription_usages_table.php' => database_path('migrations/create_plan_subscription_usages_table.php'),
+        ], 'migration');
     }
 }
