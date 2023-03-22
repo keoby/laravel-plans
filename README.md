@@ -20,12 +20,12 @@ $ composer require keoby/laravel-plans
 
 If your Laravel version does not support package discovery, add this line in the `providers` array in your `config/app.php` file:
 ```php
-Keoby\LaravelPlans\PlansServiceProvider::class,
+Keoby\LaravelPlans\LaravelPlansServiceProvider::class,
 ```
 
 Publish the config file & migration files:
 ```bash
-$ php artisan vendor:publish --provider=Keoby\LaravelPlans\PlansServiceProvider
+$ php artisan vendor:publish --tag=laravel-plans-migrations
 ```
 
 Migrate the database:
