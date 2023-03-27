@@ -14,15 +14,18 @@ return new class extends Migration
     public function up()
     {
         Schema::create('plans', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary()->unique()->index();
             $table->string('name');
             $table->text('description')->nullable();
+            $table->float('price', 8, 2);
+            $table->string('currency');
             $table->unsignedInteger('duration')->default(30);
             $table->timestamps();
         });
 
-        Schema::create('features', function (Blueprint $table) {
-            $table->id();
+        Schema::create('plan_features', function (Blueprint $table) {
+            $table->uuid('id')->primary()->unique()->index();
+        //    $table->uuid('plan_id');
             $table->string('name');
             $table->string('code');
             $table->text('description')->nullable();
@@ -30,14 +33,15 @@ return new class extends Migration
             $table->integer('limit')->default(0);
             $table->timestamps();
 
-            $table->foreignIdFor(\Keoby\LaravelPlans\Models\Plan::class)
+            $table->foreignUuid('plan_id')
                 ->references('id')
                 ->on('plans')
                 ->onDelete('cascade');
         });
 
         Schema::create('plan_subscriptions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary()->unique()->index();
+       //     $table->uuid('plan_id');
             $table->string('payment_method')->nullable()->default(null);
             $table->boolean('active')->default(false);
 
@@ -50,24 +54,25 @@ return new class extends Migration
             $table->timestamp('starts_on')->nullable();
             $table->timestamp('expires_on')->nullable();
             $table->timestamp('cancelled_on')->nullable();
-            $table->nullableMorphs('model');
+            $table->nullableUuidMorphs('model');
             $table->timestamps();
 
-            $table->foreignIdFor(\Keoby\LaravelPlans\Models\Plan::class)
+            $table->foreignUuid('plan_id')
                 ->references('id')
                 ->on('plans')
                 ->onDelete('cascade');
         });
 
         Schema::create('plan_subscription_usages', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary()->unique()->index();
+      //      $table->uuid('subscription_id');
             $table->string('code');
             $table->float('used', 9, 2)->default(0);
             $table->timestamps();
 
-            $table->foreignIdFor(\Keoby\LaravelPlans\Models\PlanSubscription::class)
+            $table->foreignUuid('subscription_id')
                 ->references('id')
-                ->on('subscriptions')
+                ->on('plan_subscriptions')
                 ->onDelete('cascade');
         });
     }
@@ -80,7 +85,7 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('plans');
-        Schema::dropIfExists('features');
+        Schema::dropIfExists('plan_features');
         Schema::dropIfExists('plan_subscriptions');
         Schema::dropIfExists('plan_subscription_usages');
     }
