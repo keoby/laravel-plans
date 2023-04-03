@@ -21,11 +21,11 @@ return new class extends Migration
             $table->string('currency');
             $table->unsignedInteger('duration')->default(30);
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('plan_features', function (Blueprint $table) {
             $table->uuid('id')->primary()->unique()->index();
-        //    $table->uuid('plan_id');
             $table->string('name');
             $table->string('code');
             $table->text('description')->nullable();
@@ -41,7 +41,6 @@ return new class extends Migration
 
         Schema::create('plan_subscriptions', function (Blueprint $table) {
             $table->uuid('id')->primary()->unique()->index();
-       //     $table->uuid('plan_id');
             $table->string('payment_method')->nullable()->default(null);
             $table->boolean('active')->default(false);
 
@@ -65,7 +64,6 @@ return new class extends Migration
 
         Schema::create('plan_subscription_usages', function (Blueprint $table) {
             $table->uuid('id')->primary()->unique()->index();
-      //      $table->uuid('subscription_id');
             $table->string('code');
             $table->float('used', 9, 2)->default(0);
             $table->timestamps();
@@ -74,6 +72,17 @@ return new class extends Migration
                 ->references('id')
                 ->on('plan_subscriptions')
                 ->onDelete('cascade');
+        });
+
+        Schema::create('stripe_customers', function (Blueprint $table) {
+            $table->uuid('id')->primary()->unique()->index();
+
+            $table->uuid('model_id');
+            $table->string('model_type');
+
+            $table->string('customer_id');
+
+            $table->timestamps();
         });
     }
 
@@ -88,5 +97,6 @@ return new class extends Migration
         Schema::dropIfExists('plan_features');
         Schema::dropIfExists('plan_subscriptions');
         Schema::dropIfExists('plan_subscription_usages');
+        Schema::dropIfExists('stripe_customers');
     }
 };

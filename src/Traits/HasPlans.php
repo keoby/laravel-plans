@@ -11,6 +11,7 @@ use Keoby\LaravelPlans\Events\UpgradeSubscription;
 use Keoby\LaravelPlans\Events\UpgradeSubscriptionUntil;
 use Keoby\LaravelPlans\Models\Plan;
 use Keoby\LaravelPlans\Models\PlanSubscription;
+use Keoby\LaravelPlans\Traits\CanPayWithStripe;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasPlans
 {
+    use CanPayWithStripe;
+
     /**
      * Get PlanSubscriptions relationship.
      *
@@ -182,13 +185,27 @@ trait HasPlans
             'starts_on' => Carbon::now()->subSeconds(1),
             'expires_on' => Carbon::now()->addDays($duration),
             'cancelled_on' => null,
-            'payment_method' => null,
-            'active' => true,
-            'charging_price' => $plan->price,
-            'charging_currency' => $plan->currency,
+            'payment_method' => ($this->subscriptionPaymentMethod) ?: null,
+            'active' => (bool) ($this->subscriptionPaymentMethod) ? false : true,
+            'charging_price' => ($this->chargingPrice) ?: $plan->price,
+            'charging_currency' => ($this->chargingCurrency) ?: $plan->currency,
             'is_recurring' => $isRecurring,
             'recurring_each_days' => $duration,
         ]));
+
+        if ($this->subscriptionPaymentMethod == 'stripe') {
+            try {
+                $stripeCharge = $this->chargeWithStripe(($this->chargingPrice) ?: $plan->price, ($this->chargingCurrency) ?: $plan->currency);
+
+                $subscription->update([
+                    'active' => true,
+                ]);
+
+                event(new \Keoby\LaravelPlans\Events\Stripe\ChargeSuccessful($this, $subscription, $stripeCharge));
+            } catch (\Exception $exception) {
+                event(new \Keoby\LaravelPlans\Events\Stripe\ChargeFailed($this, $subscription, $exception));
+            }
+        }
 
         event(new NewSubscription($this, $subscription));
 
@@ -220,13 +237,27 @@ trait HasPlans
             'starts_on' => Carbon::now()->subSeconds(1),
             'expires_on' => $date,
             'cancelled_on' => null,
-            'payment_method' => null,
-            'active' => true,
-            'charging_price' => $plan->price,
-            'charging_currency' => $plan->currency,
+            'payment_method' => ($this->subscriptionPaymentMethod) ?: null,
+            'active' => (bool) ($this->subscriptionPaymentMethod) ? false : true,
+            'charging_price' => ($this->chargingPrice) ?: $plan->price,
+            'charging_currency' => ($this->chargingCurrency) ?: $plan->currency,
             'is_recurring' => $isRecurring,
             'recurring_each_days' => Carbon::now()->subSeconds(1)->diffInDays($date),
         ]));
+
+        if ($this->subscriptionPaymentMethod == 'stripe') {
+            try {
+                $stripeCharge = $this->chargeWithStripe(($this->chargingPrice) ?: $plan->price, ($this->chargingCurrency) ?: $plan->currency);
+
+                $subscription->update([
+                    'active' => true,
+                ]);
+
+                event(new \Keoby\LaravelPlans\Events\Stripe\ChargeSuccessful($this, $subscription, $stripeCharge));
+            } catch (\Exception $exception) {
+                event(new \Keoby\LaravelPlans\Events\Stripe\ChargeFailed($this, $subscription, $exception));
+            }
+        }
 
         event(new NewSubscriptionUntil($this, $subscription, $date));
 
@@ -355,7 +386,7 @@ trait HasPlans
             'starts_on' => Carbon::parse($activeSubscription->expires_on),
             'expires_on' => Carbon::parse($activeSubscription->expires_on)->addDays($duration),
             'cancelled_on' => null,
-            'payment_method' => null,
+            'payment_method' => ($this->subscriptionPaymentMethod) ?: null,
             'is_recurring' => $isRecurring,
             'recurring_each_days' => $duration,
         ]));
@@ -412,7 +443,7 @@ trait HasPlans
             'starts_on' => Carbon::parse($activeSubscription->expires_on),
             'expires_on' => $date,
             'cancelled_on' => null,
-            'payment_method' => null,
+            'payment_method' => ($this->subscriptionPaymentMethod) ?: null,
             'is_recurring' => $isRecurring,
             'recurring_each_days' => Carbon::now()->subSeconds(1)->diffInDays($date),
         ]));
@@ -465,6 +496,10 @@ trait HasPlans
             return false;
         }
 
+        if ($this->hasDueSubscription()) {
+            return $this->chargeForLastDueSubscription();
+        }
+
         $lastActiveSubscription = $this->lastActiveSubscription();
 
         if (! $lastActiveSubscription) {
@@ -483,6 +518,10 @@ trait HasPlans
             if (! $lastActiveSubscription->active) {
                 return false;
             }
+        }
+
+        if ($lastActiveSubscription->payment_method == 'stripe') {
+            return $this->withStripe()->withStripeToken($stripeToken)->subscribeTo($plan, $recurringEachDays);
         }
 
         return $this->subscribeTo($plan, $recurringEachDays);
