@@ -354,6 +354,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 - [Keoby](https://github.com/keoby)
 - **Georgescu Alexandru** *Initial work*
 - [Musa Kurt](https://github.com/whtht)
+- [Dukens Thelemaque](https://github.com/whtht)
 - [All Contributors](../../contributors)
 
 ### License

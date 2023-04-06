@@ -7,7 +7,7 @@ use Stripe\Stripe;
 use Stripe\Charge as StripeCharge;
 use Stripe\Customer as StripeCustomer;
 use Keoby\LaravelPlans\Helpers\StripeHelper;
-use Keoby\LaravelPlans\Models\StripeCustomerModel::class;
+use Keoby\LaravelPlans\Models\StripeCustomerModel;
 
 trait CanPayWithStripe
 {
@@ -44,7 +44,7 @@ trait CanPayWithStripe
     public function getStripeCustomer(): null|StripeCustomerModel
     {
         if (! $this->isStripeCustomer()) {
-            return;
+            return null;
         }
 
         return $this->stripeCustomer()->first();
@@ -79,7 +79,7 @@ trait CanPayWithStripe
      *
      * @return bool
      */
-    public function deleteStripeCustomer()
+    public function deleteStripeCustomer(): bool
     {
         if (! $this->isStripeCustomer()) {
             return false;
@@ -107,7 +107,7 @@ trait CanPayWithStripe
      *
      * @return void
      */
-    public function withStripe(): void
+    public function withStripe(): static
     {
         $this->subscriptionPaymentMethod = 'stripe';
 
@@ -119,7 +119,7 @@ trait CanPayWithStripe
      *
      * @return self
      */
-    public function withStripeToken(string $stripeToken = null): void
+    public function withStripeToken(string $stripeToken = null): static
     {
         $this->stripeToken = $stripeToken;
 
@@ -131,7 +131,7 @@ trait CanPayWithStripe
      *
      * @return self
      */
-    public function setChargingPriceTo(float $chargingPrice, string $chargingCurrency): void
+    public function setChargingPriceTo(float $chargingPrice, string $chargingCurrency): static
     {
         $this->chargingPrice = $chargingPrice;
         $this->chargingCurrency = $chargingCurrency;
